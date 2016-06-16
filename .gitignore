@@ -1,0 +1,6 @@
+# test certificates
+*.pem
+*.p12
+
+*.pyc
+apnsclient/*.pyc
