@@ -1,13 +1,13 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 import sys, getopt
-sys.path.append('./apnsclient')
 from OpenSSL import crypto
+sys.path.append('./')
 from apnsclient import *
 import logging
 logging.basicConfig()
 
-class client:
+class cert_verifier:
     def __init__(self, cert='', key='', device_token='', message=''):
         if device_token is '' or message is '':
             raise Exception('invalid device_token or message')
@@ -56,14 +56,7 @@ class client:
 
 
 if __name__ == "__main__":
-
-    # May require "" for empty password depending on version
-    p12 = crypto.load_pkcs12(file("cert.p12", 'rb').read(), 'YOUR_PASSWORD') 
-    # PEM formatted private key
-    key =  crypto.dump_privatekey(crypto.FILETYPE_PEM, p12.get_privatekey())
-    # PEM formatted certificate
-    cert = crypto.dump_certificate(crypto.FILETYPE_PEM, p12.get_certificate())
-
+    # testing
     if len(sys.argv) != 5:
         print 'sample.py -t <token> -m <message>'
     device_token = ''
@@ -82,13 +75,19 @@ if __name__ == "__main__":
         elif opt in ("-m"):
             message = arg
     try:
-        client = client(cert=cert, key=key, device_token=device_token, message=message)
+        p12 = crypto.load_pkcs12(file("cert.p12", 'rb').read(), 'YOUR_PASSWORD') 
+        # PEM formatted private key
+        key =  crypto.dump_privatekey(crypto.FILETYPE_PEM, p12.get_privatekey())
+        # PEM formatted certificate
+        cert = crypto.dump_certificate(crypto.FILETYPE_PEM, p12.get_certificate())
+
+        verifier = cert_verifier(cert=cert, key=key, device_token=device_token, message=message)
     except Exception as e:
         print 'Exception:', str(e) 
     else:
         try:
             print 'message is sending...'
-            client.send()
+            verifier.send()
             print 'msg is sent'
         except Exception as e:
             print 'Exception:', str(e) 
