@@ -6,6 +6,7 @@ sys.path.append('./')
 from apnsclient import *
 import logging
 logging.basicConfig()
+session = Session()
 
 class cert_verifier:
     def __init__(self, cert='', key='', device_token='', message=''):
@@ -16,24 +17,21 @@ class cert_verifier:
         self.device_token = device_token
         self.message = message
     def send(self):
-        # For feedback or non-intensive messaging
-        #con = Session().new_connection("push_sandbox", cert_file="cert.pem", key_file="key.pem")
-        #print 'cert:', self.cert
-        #print 'key:', self.key
-        con = Session().new_connection("push_sandbox", cert_string=self.cert, key_string=self.key)
-
-        # Persistent connection for intensive messaging.
-        # Keep reference to session instance in some class static/global variable,
-        # otherwise it will be garbage collected and all connections will be closed.
-        #session = Session()
-        #con = session.get_connection("push_sandbox", cert_file="sandbox.pem")
-
-        # New message to 3 devices. You app will show badge 10 over app's icon.
-        message = Message(self.device_token, alert=self.message, badge=0)
-
-        # Send the message.
-        srv = APNs(con)
         try:
+            # For feedback or non-intensive messaging
+            #con = Session().new_connection("push_sandbox", cert_string=self.cert, key_string=self.key)
+            con = Session().new_connection("feedback_sandbox", cert_string=self.cert, key_string=self.key)
+
+            # Persistent connection for intensive messaging.
+            # Keep reference to session instance in some class static/global variable,
+            # otherwise it will be garbage collected and all connections will be closed.
+            #con = session.get_connection("push_sandbox", cert_string=self.cert, key_string=self.key)
+
+            # New message to 3 devices. You app will show badge 10 over app's icon.
+            message = Message(self.device_token, alert=self.message, badge=0)
+
+            # Send the message.
+            srv = APNs(con)
             res = srv.send(message)
         except:
             print "Can't connect to APNs, looks like network is down"
