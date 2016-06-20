@@ -73,7 +73,7 @@ if __name__ == "__main__":
         elif opt in ("-m"):
             message = arg
     try:
-        p12 = crypto.load_pkcs12(file("cert.p12", 'rb').read(), 'YOUR_PASSWORD') 
+        p12 = crypto.load_pkcs12(file("cert.p12", 'rb').read(), '') 
         # PEM formatted private key
         key =  crypto.dump_privatekey(crypto.FILETYPE_PEM, p12.get_privatekey())
         # PEM formatted certificate
